@@ -22,7 +22,7 @@ for filename in os.listdir(current_dir):
         # mkvmerge [global options] {-o out} [options1] {file1} [[options2] {file2}] [@options-file.json]
         command = [mkvinfo_path, os.path.join(current_dir, filename)]
         # print('[+] COMMAND: ', command)
-        result = subprocess.run(command, capture_output=True, text=True)
+        result = subprocess.run(command, capture_output=True, text=True, encoding='utf-8')
         # print('[+] RESULT:', result.stdout)
         lines = result.stdout.splitlines()
         # Split the output into sections for each track
@@ -32,7 +32,7 @@ for filename in os.listdir(current_dir):
         track_info_list = []
         lang_name_map = {}
         # Skip the first section, which doesn't correspond to a track
-        with open('report.txt', 'w') as f:
+        with open('report.txt', 'w', encoding='utf-8') as f:
             # Process each track
             for track in tracks[1:]:
                 # Extract track information
@@ -65,9 +65,11 @@ for filename in os.listdir(current_dir):
                 lang_name_map = {info["language"]: info["name"] for info in track_info_list if
                                  info["language"] != "und" and info["name"] != "und"}
                 # print(track_type,"\n")
-                if track_type== "subtitles":
+                if track_type== "subtitles" and language =='vie':
                     isContainSubtitles = True
                     # print('[+] COMMAND:', command, track_number)
+                    # if language=="und":
+                    #     language = "en"
                     subtitle_file = os.path.join(subtitle_dir, f"{video_name}_{language}.srt")
 
                     # Check if subtitle file already exists
@@ -86,7 +88,7 @@ for filename in os.listdir(current_dir):
                     else:
                         print(f"Subtitles for {video_name} - {language} already exist!")
 
-        if not isContainSubtitles:       print(f"{video_name} do not contain subtitles ")
+        if not isContainSubtitles:       print(f"{video_name} do not contain Vietnam subtitles ")
         print("\n")
 
         # # Update 'und' languages and names in the list
