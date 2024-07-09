@@ -2,6 +2,7 @@ import requests
 import os
 import subprocess
 import time
+import re
 
 # URLs to download the M3U8 files
 urls = {
@@ -12,17 +13,22 @@ urls = {
 # Directory to save the downloaded files
 download_dir = "."
 
+def sanitize_filename(filename):
+    # Remove any characters that are not allowed in Windows filenames
+    return re.sub(r'[<>:"/\\|?*]', '', filename)
+
 def download_files(urls, download_dir):
     for filename, url in urls.items():
         start_time = time.time()
         response = requests.get(url)
         if response.status_code == 200:
             print(f"Downloading {filename} from {url}...")
-            file_path = os.path.join(download_dir, filename)
+            sanitized_filename = sanitize_filename(filename)
+            file_path = os.path.join(download_dir, sanitized_filename)
             with open(file_path, 'wb') as file:
                 file.write(response.content)
             end_time = time.time()
-            print(f"Downloaded {filename} from {url} in {end_time - start_time:.2f} seconds")
+            print(f"Downloaded {sanitized_filename} from {url} in {end_time - start_time:.2f} seconds")
         else:
             print(f"Failed to download {filename} from {url}")
 
